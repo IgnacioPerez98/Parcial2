@@ -62,6 +62,32 @@ public class TGrafoNoDirigidoTest {
 
     @org.junit.Test
     public void testBea() {
+        Collection<TVertice> vertices = new LinkedList<>();
+        TVertice miVerticetito1 = new TVertice("1");
+        TVertice miVerticetito2 = new TVertice("2");
+        TVertice miVerticetito3 = new TVertice("3");
+        vertices.add(miVerticetito2);
+        vertices.add(miVerticetito1);
+        vertices.add(miVerticetito3);
+        
+        TAristas lasAristasDelNico = new TAristas();
+        TArista laAristaDelNico1 = new TArista("1", "2", 2);
+        TArista laAristaDelNico2 = new TArista("1", "3", 1);
+        TArista laAristaDelNico3 = new TArista("2", "3", 100);
+        lasAristasDelNico.add(laAristaDelNico1);
+        lasAristasDelNico.add(laAristaDelNico2);
+        lasAristasDelNico.add(laAristaDelNico3);
+               
+        TGrafoNoDirigido myTgrafito = new TGrafoNoDirigido(vertices, lasAristasDelNico);
+        
+        Collection<TVertice> myTgrafito2 = myTgrafito.bea();
+        String res = "";
+        
+        for(TVertice v: myTgrafito2){
+            res = res + v.getEtiqueta();
+        }
+        
+        assertEquals("123", res);
     }
 
     @org.junit.Test

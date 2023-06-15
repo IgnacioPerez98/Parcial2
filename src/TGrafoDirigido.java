@@ -292,14 +292,25 @@ public class TGrafoDirigido implements IGrafoDirigido {
         getVertices().get(etiquetaOrigen).bea(col);
         return col;
     }
-
+    
     public Collection<TVertice> bea() {
-        desvisitarVertices();
-        LinkedList<TVertice> col = new LinkedList<>();
-        LinkedList<TVertice> vertices = (LinkedList<TVertice>) this.vertices.values();
-        getVertices().get(vertices.getFirst()).bea(col);
-        return col;
+        LinkedList<TVertice> resultado = new LinkedList<>();
+        this.desvisitarVertices();
+        this.getVertices().forEach((key, value) -> {
+            if (!value.getVisitado()) {
+                value.bea(resultado);
+            }
+        });
+        return resultado;
     }
+
+//    public Collection<TVertice> bea() {
+//        desvisitarVertices();
+//        LinkedList<TVertice> col = new LinkedList<>();
+//        LinkedList<TVertice> vertices = (LinkedList<TVertice>) this.vertices.values();
+//        getVertices().get(vertices.getFirst()).bea(col);
+//        return col;
+//    }
 
     public Collection<TVertice> bpf() {
         desvisitarVertices(); //agregué este bpf porque no usamos el bpf con vertice al final

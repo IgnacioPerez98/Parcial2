@@ -156,6 +156,7 @@ public class TVertice<T> implements IVertice {
 
     public void bea(Collection<TVertice> visitados) {
         this.setVisitado(true);
+        visitados.add(this);
         TVertice x = null;
         StringBuilder sb = new StringBuilder();
         Queue<TVertice> C = new LinkedList<>();
@@ -166,13 +167,14 @@ public class TVertice<T> implements IVertice {
             for (TAdyacencia y : (LinkedList<TAdyacencia>) x.getAdyacentes()) {
                 TVertice actual = y.getDestino();
                 if (!actual.getVisitado()) {
+                    visitados.add(actual);
                     actual.setVisitado(true);
                     C.add(actual);
                     sb.append(actual.getEtiqueta() + " ");
                 }
             }
         }
-        System.out.println(sb.toString());
+//        System.out.println(sb.toString());
     }
 
     public TCaminos todosLosCaminos(Comparable etVertDest, TCamino caminoPrevio, TCaminos todosLosCaminos) {
