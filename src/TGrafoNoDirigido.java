@@ -2,14 +2,7 @@
 import java.util.Collection;
 import java.util.LinkedList;
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-/**
- *
- * @author Administrator
- */
+
 public class TGrafoNoDirigido extends TGrafoDirigido implements IGrafoNoDirigido {
 
     protected TAristas lasAristas = new TAristas();
@@ -96,7 +89,7 @@ public class TGrafoNoDirigido extends TGrafoDirigido implements IGrafoNoDirigido
         return listaVisitados;
     }*/
     
-    public Collection<TVertice> bea(Comparable etiquetaOrigen) {
+   public Collection<TVertice> bea(Comparable etiquetaOrigen) {
         desvisitarVertices();
         LinkedList<TVertice> col = new LinkedList<>();
         getVertices().get(etiquetaOrigen).bea(col);

@@ -35,6 +35,7 @@ public class TVertice<T> implements IVertice {
         return etiqueta;
     }
 
+    
 
     // </editor-fold>
     
@@ -107,6 +108,11 @@ public class TVertice<T> implements IVertice {
             }
         }
         return null;
+    }
+    public void printAdyacencia() {
+        for (TAdyacencia ady : adyacentes){
+            System.out.println("("+ady.getDestino().getEtiqueta()+","+ady.getCosto()+")");
+        }
     }
 
     // </editor-fold>

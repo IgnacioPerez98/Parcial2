@@ -192,7 +192,7 @@ public class TGrafoDirigido implements IGrafoDirigido {
         Double[][] matrizPredecesores = new Double[matrizFloyd.length][matrizFloyd.length];
         int tamanio = matrizFloyd.length;
 
-        for (int i = 1; i < tamanio; i++) {//cetea la diagonal a 0 
+        for (int i = 1; i < tamanio; i++) {//Setea la diagonal a 0 
             matrizFloyd[i][i] = 0d;
         }
         for (int k = 1; k < tamanio; k++) {
@@ -286,9 +286,19 @@ public class TGrafoDirigido implements IGrafoDirigido {
         return false;
     }
 
+    public Collection<TVertice> bea(Comparable etiquetaOrigen) {
+        desvisitarVertices();
+        LinkedList<TVertice> col = new LinkedList<>();
+        getVertices().get(etiquetaOrigen).bea(col);
+        return col;
+    }
+
     public Collection<TVertice> bea() {
-        //TODO:
-        return null;
+        desvisitarVertices();
+        LinkedList<TVertice> col = new LinkedList<>();
+        LinkedList<TVertice> vertices = (LinkedList<TVertice>) this.vertices.values();
+        getVertices().get(vertices.getFirst()).bea(col);
+        return col;
     }
 
     public Collection<TVertice> bpf() {
@@ -334,9 +344,11 @@ public class TGrafoDirigido implements IGrafoDirigido {
     }
 
     public boolean tieneCiclo(TCamino camino) {
-        //TODO:
-        return false;
-
+        desvisitarVertices();
+        if (camino == null) {
+            return false;
+        }
+        return camino.getOrigen().tieneCiclo(camino);
     }
 
     public boolean tieneCiclo() {
