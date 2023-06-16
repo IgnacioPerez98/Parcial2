@@ -1,0 +1,7 @@
+esPosibleLlegarATodos, HOU, N
+esPosibleLlegarATodos, BWI, N
+esPosibleLlegarATodos, PHL, S
+
+esPosibleLlegarATodos2, HOU, N
+esPosibleLlegarATodos2, BWI, N
+esPosibleLlegarATodos2, PHL, S

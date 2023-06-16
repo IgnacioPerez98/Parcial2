@@ -210,6 +210,7 @@ public class TGrafoDirigido implements IGrafoDirigido {
         return matrizFloyd;
     }
 
+    
     private Map<Comparable, Double> obtenerExcentricidades() {
         Double[][] matrizFloyd = floyd();
         int tamanio = vertices.size();
@@ -234,6 +235,14 @@ public class TGrafoDirigido implements IGrafoDirigido {
         return resultado;
     }
 
+    /*
+    Dado G=(V,A), la excentricidad de un nodo v se define como la máxima de todas las longitudes mínimas de los caminos entre cada
+    uno de los otros nodos y el nodo v. 
+    • El centro de G es un vértice de mínima excentricidad.
+    • Para obtener el centro de un grafo hacer:
+        – aplicar Floyd para obtener el largo de los caminos,
+        – encontrar el máximo valor en cada columna i, y con ello se obtiene la excentricidad de i,
+        – encontrar el vértice con excentricidad mínima: el centro de G.*/
     @Override
     public Comparable obtenerExcentricidad(Comparable etiquetaVertice) {
         Double[][] floyd = this.floyd();
