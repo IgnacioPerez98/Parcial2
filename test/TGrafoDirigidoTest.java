@@ -14,6 +14,7 @@ public class TGrafoDirigidoTest {
 
     TGrafoDirigido Grafo;
     TGrafoDirigido GrafoSimplif;
+    TGrafoDirigido GrafoSimplif2;
 
     public TGrafoDirigidoTest() {
     }
@@ -44,11 +45,42 @@ public class TGrafoDirigidoTest {
         TGrafoDirigido grafito = new TGrafoDirigido(vertices, aristas);
         return grafito;
     }
+    private TGrafoDirigido crearGrafoSimplificado2() {
+        //Creo los Vertices
+        LinkedList<TVertice> vertices = new LinkedList<>();
+        TVertice vert1 = new TVertice("1");
+        TVertice vert2 = new TVertice("2");
+        TVertice vert3 = new TVertice("3");
+        TVertice vert4 = new TVertice("4");
+        TVertice vert5 = new TVertice("5");
+        vertices.add(vert1);
+        vertices.add(vert2);
+        vertices.add(vert3);
+        vertices.add(vert4);
+        vertices.add(vert5);
+
+        //creo las Aristas
+        TAristas aristas = new TAristas();
+        TArista arista1 = new TArista("1", "2", 2);
+        TArista arista2 = new TArista("1", "3", 1);
+        TArista arista3 = new TArista("2", "5", 10);
+        TArista arista4 = new TArista("3", "5", 10);
+        TArista arista5 = new TArista("2", "4", 10);
+        aristas.add(arista1);
+        aristas.add(arista2);
+        aristas.add(arista3);
+        aristas.add(arista4);
+        aristas.add(arista5);
+        TGrafoDirigido grafito = new TGrafoDirigido(vertices, aristas);
+        return grafito;
+    }
 
     @Before
     public void setUp() {
         //Grafo = crearGrafo();//Cambiar los path de los archivos en la funcion
         GrafoSimplif = crearGrafoSimplificado();
+        GrafoSimplif2 = crearGrafoSimplificado2();
+
     }
 
     @Test
@@ -101,6 +133,10 @@ public class TGrafoDirigidoTest {
 
     @Test
     public void testInsertarArista() {
+        boolean actual = GrafoSimplif.existeArista("2","1");
+        GrafoSimplif.insertarArista(new TArista("2","1",100));
+        boolean expected = GrafoSimplif.existeArista("2","1");
+        assertEquals(!actual,expected);
     }
 
     @Test
@@ -122,6 +158,33 @@ public class TGrafoDirigidoTest {
 
     @Test
     public void testGetEtiquetasOrdenado() {
+        LinkedList<TVertice> vertices = new LinkedList<>();
+        TVertice vert1 = new TVertice("3");
+        TVertice vert2 = new TVertice("1");
+        TVertice vert3 = new TVertice("2");
+        vertices.add(vert1);
+        vertices.add(vert2);
+        vertices.add(vert3);
+        //creo las Aristas
+        TAristas aristas = new TAristas();
+        TArista arista1 = new TArista("3", "2", 2);
+        TArista arista2 = new TArista("1", "3", 1);
+        TArista arista3 = new TArista("2", "3", 10);
+        aristas.add(arista1);
+        aristas.add(arista2);
+        aristas.add(arista3);
+        TGrafoDirigido grafito = new TGrafoDirigido(vertices, aristas);
+        Object[] obj = grafito.getEtiquetasOrdenado();
+
+        boolean primero = obj[0]=="1";
+        boolean segundo = obj[0]=="2";
+        boolean tercero = obj[0]=="3";
+        if(primero == true && segundo == true && tercero ==true){
+            assertTrue(true);
+        }else {
+            assertFalse(false);;
+        }
+
     }
 
     @Test
@@ -149,7 +212,6 @@ public class TGrafoDirigidoTest {
             }
         }
         assertTrue(ctl);
-        
     }
 
     @Test
@@ -182,26 +244,84 @@ public class TGrafoDirigidoTest {
 
     @Test
     public void testBea_Comparable() {
+        GrafoSimplif2.imprimirGrafo();
+        var ordenado = GrafoSimplif2.bea("1");
+        String expected = "12354";
+        String actual = "";
+        UtilGenerico<TVertice> util = new UtilGenerico<>();
+        LinkedList<TVertice> listado = util.FromCollection(ordenado);
+        for(TVertice v : listado){
+            actual += v.getEtiqueta();
+        }
+
+        assertEquals(expected,actual);
     }
 
     @Test
     public void testBea_0args() {
+        var ordenado = GrafoSimplif.bea();
+        String expected = "123";
+        String actual = ""; 
+        UtilGenerico<TVertice> util = new UtilGenerico<>();
+        LinkedList<TVertice> listado = util.FromCollection(ordenado);
+        for(TVertice v : listado){
+            actual += (String)v.getEtiqueta();
+        }
+        assertEquals(expected,actual);
     }
 
     @Test
     public void testBpf_0args() {
+        var ordenado = GrafoSimplif2.bpf();
+        String expected = "12543";
+        String actual = "";
+        var i = ordenado.toArray();
+        for (int j = 0; j < i.length; j++) {
+            actual += (String)i[j];
+            System.out.println(i[j]);
+        }
+        assertEquals(expected,actual);
     }
 
     @Test
     public void testBpf_Comparable() {
+        var ordenado = GrafoSimplif2.bpf("2");
+        String expected = "254";
+        String actual = "";
+        var i = ordenado.toArray();
+        for (int j = 0; j < i.length; j++) {
+            actual += (String)i[j];
+            System.out.println(i[j]);
+        }
+        assertEquals(expected,actual);
     }
 
     @Test
     public void testBpf_TVertice() {
+        TVertice v = GrafoSimplif2.buscarVertice("2");
+        var ordenado = GrafoSimplif2.bpf(v);
+        String expected = "254";
+        String actual = "";
+        var i = ordenado.toArray();
+        for (int j = 0; j < i.length; j++) {
+            actual += (String)i[j];
+            System.out.println(i[j]);
+        }
+        assertEquals(expected,actual);
     }
 
     @Test
     public void testDesvisitarVertices() {
+        GrafoSimplif.desvisitarVertices();
+        var vertices = GrafoSimplif.getVertices().values();
+        boolean ctl = true;
+        for(TVertice vert: vertices){
+            if(vert.getVisitado()){
+                ctl = false;
+                break;
+            }
+        }
+        assertTrue(ctl);
     }
 
     @Test

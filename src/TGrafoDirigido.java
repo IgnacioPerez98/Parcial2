@@ -7,6 +7,15 @@ import java.util.TreeMap;
 
 public class TGrafoDirigido implements IGrafoDirigido {
 
+    public void imprimirGrafo() {
+        for (TVertice vertice : vertices.values()) {
+            System.out.print("Vertice " + vertice.getEtiqueta() + ":");
+            for (Object adyacencia : vertice.getAdyacentes()) {
+                System.out.print(" [" + ((TAdyacencia)adyacencia).getDestino().getEtiqueta() + ", " + ((TAdyacencia)adyacencia).getCosto() + "]");
+            }
+            System.out.println();
+        }
+    }
     protected Map<Comparable, TVertice> vertices; // vertices del grafo.-
 
     public TGrafoDirigido(Collection<TVertice> vertices, Collection<TArista> aristas) {
@@ -323,7 +332,7 @@ public class TGrafoDirigido implements IGrafoDirigido {
 
     public Collection<TVertice> bpf() {
         desvisitarVertices(); //agregué este bpf porque no usamos el bpf con vertice al final
-        Collection<TVertice> visitados = new LinkedList<>();
+        LinkedList<TVertice> visitados = new LinkedList<>();
         Collection<TVertice> vertices = this.vertices.values();
         for (TVertice v : vertices) {
             if (!v.getVisitado()) {

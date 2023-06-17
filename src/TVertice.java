@@ -45,6 +45,11 @@ public class TVertice<T> implements IVertice {
         visitado = false;
     }  
     
+    @Override
+    public String toString(){
+        return "("+etiqueta+", "+visitado+")";
+    }
+        
     // <editor-fold defaultstate="collapsed" desc="Operaciones de Adyacencia">  
     @Override
     public TAdyacencia buscarAdyacencia(TVertice verticeDestino) {

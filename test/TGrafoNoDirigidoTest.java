@@ -5,6 +5,8 @@
 
 import java.util.Collection;
 import java.util.LinkedList;
+
+import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -13,20 +15,12 @@ import static org.junit.Assert.*;
  * @author nicolas
  */
 public class TGrafoNoDirigidoTest {
-        
+
+    TGrafoNoDirigido GrafoSimplificado;
     public TGrafoNoDirigidoTest() {
     }
 
-    @org.junit.Test
-    public void testInsertarArista() {
-    }
-
-    @org.junit.Test
-    public void testGetLasAristas() {
-    }
-
-    @org.junit.Test
-    public void testPrim() {
+    private TGrafoNoDirigido CrearGrafo(){
         Collection<TVertice> vertices = new LinkedList<>();
         TVertice miVerticetito1 = new TVertice("Hola");
         TVertice miVerticetito2 = new TVertice("Hola2");
@@ -34,7 +28,7 @@ public class TGrafoNoDirigidoTest {
         vertices.add(miVerticetito2);
         vertices.add(miVerticetito1);
         vertices.add(miVerticetito3);
-        
+
         TAristas lasAristasDelNico = new TAristas();
         TArista laAristaDelNico1 = new TArista("Hola", "Hola2", 2);
         TArista laAristaDelNico2 = new TArista("Hola", "Hola3", 1);
@@ -42,10 +36,25 @@ public class TGrafoNoDirigidoTest {
         lasAristasDelNico.add(laAristaDelNico1);
         lasAristasDelNico.add(laAristaDelNico2);
         lasAristasDelNico.add(laAristaDelNico3);
-               
+
         TGrafoNoDirigido myTgrafito = new TGrafoNoDirigido(vertices, lasAristasDelNico);
-        
-        TGrafoNoDirigido myTgrafito2 = myTgrafito.Prim();
+        return myTgrafito;
+    }
+    @Before
+    public  void SetUp(){
+        GrafoSimplificado = CrearGrafo();
+    }
+    @Test
+    public void testInsertarArista() {
+    }
+
+    @Test
+    public void testGetLasAristas() {
+    }
+
+    @Test
+    public void testPrim() {
+        TGrafoNoDirigido myTgrafito2 = GrafoSimplificado.Prim();
                
         double sum = 0;
         
@@ -56,8 +65,11 @@ public class TGrafoNoDirigidoTest {
         assert(6.0 == sum);
     }
 
-    @org.junit.Test
+    @Test
     public void testKruskal() {
+        TGrafoNoDirigido res = GrafoSimplificado.Kruskal();
+        res.imprimirGrafo();
+
     }
 
     @org.junit.Test
