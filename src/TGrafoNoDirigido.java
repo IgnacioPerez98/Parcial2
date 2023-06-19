@@ -27,7 +27,9 @@ public class TGrafoNoDirigido extends TGrafoDirigido implements IGrafoNoDirigido
 
     @Override
     public boolean esConexo() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Collection<TVertice> vertices = this.getVertices().values();
+        Collection<TVertice> visitados = this.bpf(vertices.iterator().next());
+        return vertices.size() == visitados.size();
     }
 
     @Override
