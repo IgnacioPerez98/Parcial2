@@ -3,18 +3,29 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class TVertice<T> implements IVertice {
+public class TVertice<T> implements IVertice, IVerticeKevinBacon {
 
-    private final Comparable etiqueta;
+    private Comparable etiqueta;
     private LinkedList<TAdyacencia> adyacentes;
     private boolean visitado;
     private T datos;
 
-    // <editor-fold defaultstate="collapsed" desc="Getters y Setters">
-    /**
-     *
-     * @return
-     */
+    public TVertice(Comparable unaEtiqueta) {
+        this.etiqueta = unaEtiqueta;
+        adyacentes = new LinkedList();
+        visitado = false;
+        bacon = 0;
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="Get & Set">
+    public Comparable getEtiqueta() {
+        return etiqueta;
+    }
+
+    public LinkedList<TAdyacencia> getAdyacentes() {
+        return adyacentes;
+    }
+
     public T getDatos() {
         return datos;
     }
@@ -26,31 +37,9 @@ public class TVertice<T> implements IVertice {
     public boolean getVisitado() {
         return this.visitado;
     }
-
-    @Override
-    public LinkedList<TAdyacencia> getAdyacentes() {
-        return adyacentes;
-    }
-    public Comparable getEtiqueta() {
-        return etiqueta;
-    }
-
-    
-
     // </editor-fold>
     
-    public TVertice(Comparable unaEtiqueta) {
-        this.etiqueta = unaEtiqueta;
-        adyacentes = new LinkedList();
-        visitado = false;
-    }  
-    
-    @Override
-    public String toString(){
-        return "("+etiqueta+", "+visitado+")";
-    }
-        
-    // <editor-fold defaultstate="collapsed" desc="Operaciones de Adyacencia">  
+    // <editor-fold defaultstate="collapsed" desc="Adyacencias">
     @Override
     public TAdyacencia buscarAdyacencia(TVertice verticeDestino) {
         if (verticeDestino != null) {
@@ -96,16 +85,6 @@ public class TVertice<T> implements IVertice {
     }
 
     @Override
-    public TVertice siguienteAdyacente(TVertice w) {
-        TAdyacencia adyacente = buscarAdyacencia(w.getEtiqueta());
-        int index = adyacentes.indexOf(adyacente);
-        if (index + 1 < adyacentes.size()) {
-            return adyacentes.get(index + 1).getDestino();
-        }
-        return null;
-    }
-
-    @Override
     public TAdyacencia buscarAdyacencia(Comparable etiquetaDestino) {
         for (TAdyacencia adyacencia : adyacentes) {
             if (adyacencia.getDestino().getEtiqueta().compareTo(etiquetaDestino) == 0) {
@@ -114,19 +93,29 @@ public class TVertice<T> implements IVertice {
         }
         return null;
     }
-    public void printAdyacencia() {
-        for (TAdyacencia ady : adyacentes){
-            System.out.println("("+ady.getDestino().getEtiqueta()+","+ady.getCosto()+")");
+
+    @Override
+    public TVertice siguienteAdyacente(TVertice vertice) {
+        TAdyacencia adyacente = buscarAdyacencia(vertice.getEtiqueta());
+        int index = adyacentes.indexOf(adyacente);
+        if (index + 1 < adyacentes.size()) {
+            return adyacentes.get(index + 1).getDestino();
         }
+        return null;
     }
 
+    public void printAdyacencia() {
+        for (TAdyacencia ady : adyacentes) {
+            System.out.println("(" + ady.getDestino().getEtiqueta() + "," + ady.getCosto() + ")");
+        }
+    }
     // </editor-fold>
-   
-    
-    
-    public void bpf(Collection<Comparable> visitados) {
+
+    // <editor-fold defaultstate="collapsed" desc="Busqueda en Profundidad (BPF)"> 
+    @Override
+    public void bpf(Collection<TVertice> visitados) {
         setVisitado(true);
-        visitados.add(this.getEtiqueta());
+        visitados.add(this);
         for (TAdyacencia adyacente : adyacentes) {
             TVertice vertAdy = adyacente.getDestino();
             if (!vertAdy.getVisitado()) {
@@ -134,91 +123,72 @@ public class TVertice<T> implements IVertice {
             }
         }
     }
+    // </editor-fold>
 
-    public boolean tieneCiclo(TCamino camino) {
-        setVisitado(true);
-        boolean ciclo = false;
-        for (TAdyacencia adyacencia : this.getAdyacentes()) {
-            if (ciclo) {
-                break;
-            }
-            TVertice w = adyacencia.getDestino();
-            if (!w.getVisitado()) {
-                camino.agregarAdyacencia(adyacencia);
-                ciclo = w.tieneCiclo(camino);
-            }
-            else {
-                if (camino.buscarVertice(w.getEtiqueta())) {
-                    ciclo = true;
-                    System.out.println("hay ciclo : " + camino.imprimirDesdeClave(w.etiqueta));
-                }
-            }
-        }
-        camino.getOtrosVertices().remove(this.getEtiqueta());
-        return ciclo;
-
-    }
-
+    // <editor-fold defaultstate="collapsed" desc="Busqueda en Amplitud (BEA)">
+    @Override
     public void bea(Collection<TVertice> visitados) {
-        this.setVisitado(true);
-        visitados.add(this);
-        TVertice x = null;
-        StringBuilder sb = new StringBuilder();
-        Queue<TVertice> C = new LinkedList<>();
-        C.add(this);
-        sb.append(this.etiqueta + " ");
-        while (!C.isEmpty()) {
-            x = C.remove();
-            for (TAdyacencia y : (LinkedList<TAdyacencia>) x.getAdyacentes()) {
-                TVertice actual = y.getDestino();
-                if (!actual.getVisitado()) {
-                    visitados.add(actual);
-                    actual.setVisitado(true);
-                    C.add(actual);
-                    sb.append(actual.getEtiqueta() + " ");
+        LinkedList<TVertice> cola = new LinkedList<>();
+        LinkedList<TAdyacencia> ad;
+        this.visitado = true;
+        cola.add(this);
+        TVertice x;
+        while (!cola.isEmpty()) {
+            x = cola.remove();
+            ad = x.getAdyacentes();
+            for (TAdyacencia ady : ad) {
+                if (!ady.getDestino().visitado) {
+                    ady.getDestino().visitado = true;
+                    cola.addLast(ady.getDestino());
+                    visitados.add(ady.getDestino());
                 }
             }
         }
-//        System.out.println(sb.toString());
     }
+    // </editor-fold>
 
-    public TCaminos todosLosCaminos(Comparable etVertDest, TCamino caminoPrevio, TCaminos todosLosCaminos) {
-        this.setVisitado(true);
-        for (TAdyacencia adyacencia : this.getAdyacentes()) {
-            TVertice destino = adyacencia.getDestino();
-            if (!destino.getVisitado()) {
-                if (destino.getEtiqueta().compareTo(etVertDest) == 0) {
-                    TCamino copia = caminoPrevio.copiar();
-                    copia.agregarAdyacencia(adyacencia);
-                    todosLosCaminos.getCaminos().add(copia);
-                }
-                else {
-                    caminoPrevio.agregarAdyacencia(adyacencia);
-                    destino.todosLosCaminos(etVertDest, caminoPrevio, todosLosCaminos);
-                    caminoPrevio.eliminarAdyacencia(adyacencia);
+    // <editor-fold defaultstate="collapsed" desc="Numero Bacon">
+    public int beaBacon(Comparable actor) {
+        LinkedList<TVertice> cola = new LinkedList<>();
+        LinkedList<TAdyacencia> ad;
+        this.visitado = true;
+        cola.add(this);
+        TVertice x;
+        while (!cola.isEmpty()) {
+            x = cola.removeFirst();
+            ad = x.getAdyacentes();
+
+            for (TAdyacencia ady : ad) {
+                if (!ady.getDestino().visitado) {
+                    ady.getDestino().visitado = true;
+                    ady.getDestino().setBacon(x.bacon + 1);
+                    cola.addLast(ady.getDestino());
+                    if (ady.getDestino().etiqueta.compareTo(actor) == 0) {
+                        return x.bacon + 1;
+                    }
                 }
             }
         }
-        this.setVisitado(false);
-        return todosLosCaminos;
+        return Integer.MAX_VALUE; //pa tener algo
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Numero Bacon"> 
+    private int bacon;
+
+    @Override
+    public int getBacon() {
+        return this.bacon;
     }
 
-    // Este metodo tiene como precondicion que todos los vertices del grafo se encuentren con getVisitado en false.
-    public boolean conectadoCon(TVertice destino) {
-        setVisitado(true);
-        boolean encontrado = false;
-        if (this.getEtiqueta().equals(destino.getEtiqueta())) {
-            return true;
-        }
-        for (TAdyacencia adyacente : adyacentes) {
-            TVertice vertAdy = adyacente.getDestino();
-            if (!vertAdy.getVisitado()) {
-                encontrado = vertAdy.conectadoCon(destino);
-            }
-        }
-        return encontrado;
+    @Override
+    public void setBacon(int newBacon) {
+        this.bacon = newBacon;
     }
 
+    // </editor-fold>
+    
+    // <editor-fold defaultstate="collapsed" desc="Punto Articulacion">
     private int numBp = -1;
     private int numBajo = -1;
 
@@ -234,8 +204,7 @@ public class TVertice<T> implements IVertice {
                 adyacente.puntosArt(puntos, cont);
                 hijos.add(adyacente);
                 this.numBajo = Math.min(this.numBajo, adyacente.numBajo);
-            }
-            else {
+            } else {
                 this.numBajo = Math.min(this.numBajo, adyacente.numBp);
             }
         }
@@ -247,49 +216,73 @@ public class TVertice<T> implements IVertice {
                     puntos.add(this);           //Esto se podría mejorar con otra Collection, un Set por ej.
                 }
             }
-        }
-        else {
+        } else {
             if (hijos.size() > 1) {
                 puntos.add(this);
             }
         }
+
     }
+    // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Numero Bacon">  
-    private int numBacon = -1;
-
-    public int getBacon() {
-        return this.numBacon;
-    }
-
-    public void setBacon(int newBacon) {
-        this.numBacon = newBacon;
-    }
-
-    public int numBacon(Comparable actor) {
-        this.setBacon(0);
+    @Override
+    public TCaminos todosLosCaminos(Comparable etVertDest, TCamino caminoPrevio, TCaminos todosLosCaminos) {
         this.setVisitado(true);
-        TVertice x;
-        Queue<TVertice> cola = new LinkedList<TVertice>();
-        cola.add(this);
-        while (!cola.isEmpty()) {
-            x = cola.remove();
-            LinkedList<TAdyacencia> adyacencias = x.getAdyacentes();
-            for (TAdyacencia tAdyacencia : adyacencias) {
-                TVertice y = tAdyacencia.getDestino();
-                if (!y.getVisitado()) {
-                    y.setBacon(x.getBacon() + 1);
-                    y.setVisitado(true);
-                    if (y.getEtiqueta().compareTo(actor) == 0) {
-                        return y.getBacon();
-                    }
-                    cola.add(y);
-
+        for (TAdyacencia adyacencia : this.getAdyacentes()) {
+            TVertice destino = adyacencia.getDestino();
+            if (!destino.getVisitado()) {
+                if (destino.getEtiqueta().compareTo(etVertDest) == 0) {
+                    TCamino copia = caminoPrevio.copiar();
+                    copia.agregarAdyacencia(adyacencia);
+                    todosLosCaminos.getCaminos().add(copia);
+                } else {
+                    caminoPrevio.agregarAdyacencia(adyacencia);
+                    destino.todosLosCaminos(etVertDest, caminoPrevio, todosLosCaminos);
+                    caminoPrevio.eliminarAdyacencia(adyacencia);
                 }
             }
         }
-        return Integer.MAX_VALUE;
+        this.setVisitado(false);
+        return todosLosCaminos;
     }
-    // </editor-fold>
+
+    @Override
+    public boolean tieneCiclo(TCamino camino) {
+        setVisitado(true);
+        boolean ciclo = false;
+        for (TAdyacencia adyacencia : this.getAdyacentes()) {
+            if (ciclo) {
+                break;
+            }
+            TVertice vertice = adyacencia.getDestino();
+            if (!vertice.getVisitado()) {
+                camino.agregarAdyacencia(adyacencia);
+                ciclo = vertice.tieneCiclo(camino);
+            } else {
+                if (camino.buscarVertice(vertice.getEtiqueta())) {
+                    ciclo = true;
+                    System.out.println("hay ciclo : " + camino.imprimirDesdeClave(vertice.etiqueta));
+                }
+            }
+        }
+        camino.getOtrosVertices().remove(this.getEtiqueta());
+        return ciclo;
+    }
+
+    @Override
+    public boolean conectadoCon(TVertice destino) {
+        setVisitado(true);
+        boolean encontrado = false;
+        if (this.getEtiqueta().equals(destino.getEtiqueta())) {
+            return true;
+        }
+        for (TAdyacencia adyacente : adyacentes) {
+            TVertice vertAdy = adyacente.getDestino();
+            if (!vertAdy.getVisitado()) {
+                encontrado = vertAdy.conectadoCon(destino);
+            }
+        }
+        return encontrado;
+    }
 
 }

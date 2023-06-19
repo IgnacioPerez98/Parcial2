@@ -2,15 +2,44 @@
 import java.util.Collection;
 import java.util.LinkedList;
 
-
-public class TGrafoNoDirigido extends TGrafoDirigido implements IGrafoNoDirigido {
+public class TGrafoNoDirigido extends TGrafoDirigido implements IGrafoNoDirigido, IGrafoKevinBacon {
 
     protected TAristas lasAristas = new TAristas();
 
+    /**
+     *
+     * @param vertices
+     * @param aristas
+     */
     public TGrafoNoDirigido(Collection<TVertice> vertices, Collection<TArista> aristas) {
         super(vertices, aristas);
-         lasAristas.insertarAmbosSentidos(aristas);
+        lasAristas.insertarAmbosSentidos(aristas);
+
     }
+
+    public double getCostoTotal() {
+        double costo = 0;
+        for (TArista tArista : lasAristas) {
+            costo += tArista.getCosto();
+        }
+        return costo / 2;
+    }
+
+    @Override
+    public boolean esConexo() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public boolean conectados(TVertice origen, TVertice destino) {
+        this.desvisitarVertices();
+        if (this.existeVertice(origen.getEtiqueta()) && this.existeVertice(destino.getEtiqueta())) {
+            return this.buscarVertice(origen.getEtiqueta()).conectadoCon(destino);
+        }
+        return false;
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="Aristas">
     @Override
     public boolean insertarArista(TArista arista) {
         boolean tempbool = false;
@@ -22,43 +51,78 @@ public class TGrafoNoDirigido extends TGrafoDirigido implements IGrafoNoDirigido
     public TAristas getLasAristas() {
         return lasAristas;
     }
-    
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Prim"> 
+//---------Pseudo--------
+//TGrafoNoDirigido.Prim()
+//T: coleccion de TAritas vacia.
+//V: coleccion de TVertice vacia
+//B: clonación de coleccion de TVertice ya existentes
+//u,v: de tipo Tvertice
+//COM
+//	T.vaciar(); //conjunto de aristas AAM (Árbol Abarcador de costo Mínimo)
+//	V.agregar(1);
+//	B.eliminar(1);
+//	mientras V no este vacio, hacer:
+//		TArista aux <- TAristas.buscarMinima(V,B);
+//		T.agregar(aux)
+//		U.agregarElQuNoEsta(aux);
+//		B.eliminarElQuEsta(aux);
+//	Fin Mientras
+//FIN
+//---------Pseudo--------
+    @Override
     public TGrafoNoDirigido Prim() {
-        TArista aristaMin;
-        Collection<Comparable> VerticesU = new LinkedList<>();
-        Comparable u, v;
+
         TAristas T = new TAristas();
-        LinkedList<Comparable> VerticesV = copiarEtisVertices();
+        Collection<Comparable> VerticesU = new LinkedList<>();
+        LinkedList<Comparable> VerticesV = copiarColeccionVertices();
+
+        TArista aristaMin;
+
+        Comparable u, v;
         u = VerticesV.getFirst();
         VerticesU.add(u);
         VerticesV.remove(u);
+
         while (!VerticesV.isEmpty()) {
             aristaMin = this.lasAristas.buscarMin(VerticesU, VerticesV);
+            T.add(aristaMin);
             v = aristaMin.getEtiquetaDestino();
             VerticesU.add(v);
             VerticesV.remove(v);
-            T.add(aristaMin);
         }
+
         LinkedList<TVertice> vertices = new LinkedList<>();
-        for (Comparable eti : VerticesU) {
-            vertices.add(new TVertice<>(eti));
+        for (Comparable etiqueta : VerticesU) {
+            vertices.add(new TVertice<>(etiqueta));
         }
+
         return new TGrafoNoDirigido(vertices, T);
+
     }
 
-    private LinkedList<Comparable> copiarEtisVertices() {
-        Collection<TVertice> col = super.getVertices().values();
-        LinkedList<Comparable> copiaV = new LinkedList<>();
-        for (TVertice tVertice : col) {
-            copiaV.add(tVertice.getEtiqueta());
+    private LinkedList<Comparable> copiarColeccionVertices() {
+        Collection<TVertice> vertices = this.getVertices().values();
+        LinkedList<Comparable> copiaVertices = new LinkedList<>();
+        for (TVertice copiado : vertices) {
+            copiaVertices.add(copiado.getEtiqueta());
         }
-        return copiaV;
+        return copiaVertices;
     }
+    // </editor-fold>
 
-    
+    // <editor-fold defaultstate="collapsed" desc="Kruskal">
+//---------Pseudo--------
+//GrafoNoDirigido.Kruskal()
+//pendiente
+//FIN
+//---------Pseudo--------
+    @Override
     public TGrafoNoDirigido Kruskal() {
         TGrafoNoDirigido arbolCostoMinimo = new TGrafoNoDirigido(vertices.values(), new TAristas());
-        TAristas aristasOrdenadas = lasAristas.copiarTAristasOrdenado();
+        TAristas aristasOrdenadas = lasAristas.copiarAristasOrdenadas();
         int aristasAgregadas = 0;
 
         while (aristasAgregadas != getVertices().size() - 1) {
@@ -74,38 +138,54 @@ public class TGrafoNoDirigido extends TGrafoDirigido implements IGrafoNoDirigido
         }
         return arbolCostoMinimo;
     }
+    // </editor-fold>
 
-    /*@Override
+    // <editor-fold defaultstate="collapsed" desc="Busqueda en Amplitud (BEA)">
+    @Override
     public Collection<TVertice> bea(Comparable etiquetaOrigen) {
-        desvisitarVertices();
-        LinkedList<TVertice> listaVisitados = new LinkedList<>();
-        TVertice origen = this.getVertices().get(etiquetaOrigen);
-
+        LinkedList<TVertice> visitados = new LinkedList<>();
+        this.desvisitarVertices();
+        TVertice origen = this.buscarVertice(etiquetaOrigen);
         if (origen != null) {
-            origen.bea(listaVisitados);
-        } else {
-            System.out.println("No existe.");
+            origen.bea(visitados);
         }
-        return listaVisitados;
-    }*/
-    
-   public Collection<TVertice> bea(Comparable etiquetaOrigen) {
-        desvisitarVertices();
-        LinkedList<TVertice> col = new LinkedList<>();
-        getVertices().get(etiquetaOrigen).bea(col);
-        return col;
+        return visitados;
     }
 
- 
-    
-     
+    @Override
+    public Collection<TVertice> bea() {
+        LinkedList<TVertice> visitados = new LinkedList<>();
+        for (TVertice vertice : this.getVertices().values()) {
+            if (!visitados.contains(vertice)) {
+                vertice.bea(visitados);
+            }
+        }
+        return visitados;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Numero Bacon"> 
+    @Override
+    public int numBacon(Comparable actor) {
+
+        if (!this.existeVertice(actor) && !this.existeVertice("Kevin_Bacon")) {
+            return 0;
+        }
+        this.desvisitarVertices();
+        int miNumerito = this.getVertices().get("Kevin_Bacon").beaBacon(actor);
+        return miNumerito;
+
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Punto Articulacion">
     //Precondicion: El grafo tiene que ser conexo.
-    public LinkedList<TVertice> puntosArticulacion(Comparable etOrigen) {
+    public LinkedList<TVertice> puntosArticulacion(Comparable verticeOrigen) {
         if (esConexo()) {
             desvisitarVertices();
             int[] cont = {0};
             LinkedList<TVertice> puntos = new LinkedList<>();
-            TVertice vert = this.buscarVertice(etOrigen);
+            TVertice vert = this.buscarVertice(verticeOrigen);
             if (vert != null) {
                 vert.puntosArt(puntos, cont);
             }
@@ -113,49 +193,5 @@ public class TGrafoNoDirigido extends TGrafoDirigido implements IGrafoNoDirigido
         }
         return null;
     }
-     
-    public boolean esConexo() {
-        Collection<TVertice> vertices = this.getVertices().values();
-        Collection<TVertice> visitados = this.bpf(vertices.iterator().next());
-        return vertices.size() == visitados.size();
-    }
-    public boolean conectados(TVertice u, TVertice v) {
-        this.desvisitarVertices();
-        if (this.existeVertice(u.getEtiqueta()) && this.existeVertice(v.getEtiqueta())) {
-            return this.buscarVertice(u.getEtiqueta()).conectadoCon(v);
-        }
-        return false;
-    }
-
-     public double getCostoTotal() {
-        double costo = 0;
-        for (TArista tArista : lasAristas) {
-            costo += tArista.getCosto();
-        }
-        return costo / 2;
-    }
-
-    
-    public int numBacon(Comparable actor) {
-    desvisitarVertices();
-        int numBacon;
-        TVertice kBacon = getVertices().get("Kevin_Bacon");
-        TVertice vActor = getVertices().get(actor);
-        if (vActor != null) {
-            //Si ya tiene un numero de bacon (ya se corrio el algoritmo una vez).
-            if (vActor.getBacon() > -1) {
-                numBacon =  vActor.getBacon();
-            }
-            else {
-                numBacon = kBacon.numBacon(actor);
-                if (numBacon == Integer.MAX_VALUE)
-                    vActor.setBacon(numBacon);
-            }
-        }
-        else {
-            numBacon = -1;
-        }
-        return numBacon;
-    }
-
+    // </editor-fold>
 }

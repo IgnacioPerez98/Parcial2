@@ -1,14 +1,12 @@
 
 
-
-import java.util.LinkedList;
+import java.util.Collection;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author Ernesto
@@ -21,8 +19,6 @@ public interface IVertice {
 
     boolean eliminarAdyacencia(Comparable nomVerticeDestino);
 
-    LinkedList<TAdyacencia> getAdyacentes();
-
     boolean insertarAdyacencia(Double costo, TVertice verticeDestino);
 
     Double obtenerCostoAdyacencia(TVertice verticeDestino);
@@ -30,5 +26,14 @@ public interface IVertice {
     TVertice primerAdyacente();
 
     TVertice siguienteAdyacente(TVertice w);
+
+    public void bpf(Collection<TVertice> visitados);
+
+    public TCaminos todosLosCaminos(Comparable etVertDest, TCamino caminoPrevio, TCaminos todosLosCaminos);
     
+    
+    public boolean tieneCiclo(TCamino camino);
+    public void bea(Collection<TVertice> visitados);
+    
+    public boolean conectadoCon(TVertice destino);
 }

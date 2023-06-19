@@ -7,16 +7,7 @@ import java.util.TreeMap;
 
 public class TGrafoDirigido implements IGrafoDirigido {
 
-    public void imprimirGrafo() {
-        for (TVertice vertice : vertices.values()) {
-            System.out.print("Vertice " + vertice.getEtiqueta() + ":");
-            for (Object adyacencia : vertice.getAdyacentes()) {
-                System.out.print(" [" + ((TAdyacencia)adyacencia).getDestino().getEtiqueta() + ", " + ((TAdyacencia)adyacencia).getCosto() + "]");
-            }
-            System.out.println();
-        }
-    }
-    protected Map<Comparable, TVertice> vertices; // vertices del grafo.-
+    protected final Map<Comparable, TVertice> vertices; //lista de vertices del grafo.-
 
     public TGrafoDirigido(Collection<TVertice> vertices, Collection<TArista> aristas) {
         this.vertices = new HashMap<>();
@@ -28,12 +19,45 @@ public class TGrafoDirigido implements IGrafoDirigido {
         }
     }
 
+    // <editor-fold defaultstate="collapsed" desc="Aristas">
+    /**
+     * Matodo encargado de insertar una arista en el grafo (con un cierto
+     * costo), dado su vertice origen y destino.- Para que la arista sea valida,
+     * se deben cumplir los siguientes casos: 1) Las etiquetas pasadas por
+     * parametros son v�lidas.- 2) Los vertices (origen y destino) existen
+     * dentro del grafo.- 3) No es posible ingresar una arista ya existente
+     * (miso origen y mismo destino, aunque el costo sea diferente).- 4) El
+     * costo debe ser mayor que 0.
+     *
+     * @param arista
+     * @return True si se pudo insertar la adyacencia, false en caso contrario
+     */
+    @Override
+    public boolean insertarArista(TArista arista) {
+        boolean tempbool = false;
+        if ((arista.getEtiquetaOrigen() != null) && (arista.getEtiquetaDestino() != null)) {
+            TVertice vertOrigen = buscarVertice(arista.getEtiquetaOrigen());
+            TVertice vertDestino = buscarVertice(arista.getEtiquetaDestino());
+            tempbool = (vertOrigen != null) && (vertDestino != null);
+            if (tempbool) {
+                //getLasAristas().add(arista);
+                return vertOrigen.insertarAdyacencia(arista.getCosto(), vertDestino);
+            }
+
+        }
+        return false;
+    }
+
     /**
      * Metodo encargado de eliminar una arista dada por un origen y destino. En
      * caso de no existir la adyacencia, retorna falso. En caso de que las
      * etiquetas sean invalidas, retorna falso.
      *
+     * @param nomVerticeOrigen
+     * @param nomVerticeDestino
+     * @return
      */
+    @Override
     public boolean eliminarArista(Comparable nomVerticeOrigen, Comparable nomVerticeDestino) {
         if ((nomVerticeOrigen != null) && (nomVerticeDestino != null)) {
             TVertice vertOrigen = buscarVertice(nomVerticeOrigen);
@@ -48,8 +72,11 @@ public class TGrafoDirigido implements IGrafoDirigido {
      * Metodo encargado de verificar la existencia de una arista. Las etiquetas
      * pasadas por par�metro deben ser v�lidas.
      *
+     * @param etiquetaOrigen
+     * @param etiquetaDestino
      * @return True si existe la adyacencia, false en caso contrario
      */
+    @Override
     public boolean existeArista(Comparable etiquetaOrigen, Comparable etiquetaDestino) {
         TVertice vertOrigen = buscarVertice(etiquetaOrigen);
         TVertice vertDestino = buscarVertice(etiquetaDestino);
@@ -58,62 +85,29 @@ public class TGrafoDirigido implements IGrafoDirigido {
         }
         return false;
     }
+    // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Vertices">
     /**
-     * Metodo encargado de verificar la existencia de un vertice dentro del
-     * grafo.-
-     *
-     * La etiqueta especificada como par�metro debe ser v�lida.
-     *
-     * @param unaEtiqueta Etiqueta del vertice a buscar.-
-     * @return True si existe el vertice con la etiqueta indicada, false en caso
-     * contrario
+     * @return the vertices
      */
-    public boolean existeVertice(Comparable unaEtiqueta) {
-        return getVertices().get(unaEtiqueta) != null;
+    @Override
+    public Map<Comparable, TVertice> getVertices() {
+        return vertices;
     }
 
-    /**
-     * Metodo encargado de verificar buscar un vertice dentro del grafo.-
-     *
-     * La etiqueta especificada como parametro debe ser valida.
-     *
-     * @param unaEtiqueta Etiqueta del vertice a buscar.-
-     * @return El vertice encontrado. En caso de no existir, retorna nulo.
-     */
-    protected TVertice buscarVertice(Comparable unaEtiqueta) {
-        return getVertices().get(unaEtiqueta);
-    }
-
-    /**
-     * Metodo encargado de insertar una arista en el grafo (con un cierto
-     * costo), dado su vertice origen y destino.- Para que la arista sea valida,
-     * se deben cumplir los siguientes casos: 1) Las etiquetas pasadas por
-     * parametros son v�lidas.- 2) Los vertices (origen y destino) existen
-     * dentro del grafo.- 3) No es posible ingresar una arista ya existente
-     * (miso origen y mismo destino, aunque el costo sea diferente).- 4) El
-     * costo debe ser mayor que 0.
-     *
-     * @return True si se pudo insertar la adyacencia, false en caso contrario
-     */
-    public boolean insertarArista(TArista arista) {
-        if ((arista.getEtiquetaOrigen() != null) && (arista.getEtiquetaDestino() != null)) {
-            TVertice vertOrigen = buscarVertice(arista.getEtiquetaOrigen());
-            TVertice vertDestino = buscarVertice(arista.getEtiquetaDestino());
-            if ((vertOrigen != null) && (vertDestino != null)) {
-                return vertOrigen.insertarAdyacencia(arista.getCosto(), vertDestino);
-            }
-        }
-        return false;
+    public Object[] getEtiquetasOrdenado() {
+        TreeMap<Comparable, TVertice> mapOrdenado = new TreeMap<>(this.getVertices());
+        return mapOrdenado.keySet().toArray();
     }
 
     /**
      * Metodo encargado de insertar un vertice en el grafo.
      *
-     * No pueden ingresarse vertices con la misma etiqueta. La etiqueta
+     * No pueden ingresarse v�rtices con la misma etiqueta. La etiqueta
      * especificada como par�metro debe ser v�lida.
      *
-     * @param unaEtiqueta Etiqueta del vertice a ingresar.
+     * @param unaEtiqueta Etiqueta del v�rtice a ingresar.
      * @return True si se pudo insertar el vertice, false en caso contrario
      */
     public boolean insertarVertice(Comparable unaEtiqueta) {
@@ -126,7 +120,6 @@ public class TGrafoDirigido implements IGrafoDirigido {
     }
 
     @Override
-
     public boolean insertarVertice(TVertice vertice) {
         Comparable unaEtiqueta = vertice.getEtiqueta();
         if ((unaEtiqueta != null) && (!existeVertice(unaEtiqueta))) {
@@ -136,65 +129,59 @@ public class TGrafoDirigido implements IGrafoDirigido {
         return false;
     }
 
-    public Object[] getEtiquetasOrdenado() {
-        TreeMap<Comparable, TVertice> mapOrdenado = new TreeMap<>(this.getVertices());
-        return mapOrdenado.keySet().toArray();
+    /**
+     * Metodo encargado de eliminar un vertice en el grafo. En caso de no
+     * existir el v�rtice, retorna falso. En caso de que la etiqueta sea
+     * inv�lida, retorna false.
+     *
+     * @param nombreVertice
+     * @return
+     */
+    @Override
+    public boolean eliminarVertice(Comparable nombreVertice) {
+        if (nombreVertice != null) {
+            getVertices().remove(nombreVertice);
+            return getVertices().containsKey(nombreVertice);
+        }
+        return false;
     }
 
     /**
-     * @return the vertices
+     * Metodo encargado de verificar la existencia de un vertice dentro del
+     * grafo.-
+     *
+     * La etiqueta especificada como par�metro debe ser v�lida.
+     *
+     * @param unaEtiqueta Etiqueta del v�rtice a buscar.-
+     * @return True si existe el vertice con la etiqueta indicada, false en caso
+     * contrario
      */
-    public Map<Comparable, TVertice> getVertices() {
-        return vertices;
+    @Override
+    public boolean existeVertice(Comparable unaEtiqueta) {
+        return getVertices().get(unaEtiqueta) != null;
     }
 
-    public Comparable centroDelGrafo2() {
-        Object[] etiquetasarray = this.getEtiquetasOrdenado();
-        Comparable[] excentricidad = new Comparable[]{Double.MAX_VALUE, null};
-        for (int i = 0; i < etiquetasarray.length; i++) {
-            Comparable excentricidadVertice = this.obtenerExcentricidad((Comparable) etiquetasarray[i]);
-            if ((excentricidadVertice.compareTo(-1d) > 0) && excentricidadVertice.compareTo(excentricidad[0]) < 0) {
-                excentricidad[0] = excentricidadVertice;
-                excentricidad[1] = i;
-            }
-        }
-        return (Comparable) etiquetasarray[(int) excentricidad[1]];
+    /**
+     * Metodo encargado de verificar buscar un vertice dentro del grafo.-
+     *
+     * La etiqueta especificada como parametro debe ser valida.
+     *
+     * @param unaEtiqueta Etiqueta del v�rtice a buscar.-
+     * @return El vertice encontrado. En caso de no existir, retorna nulo.
+     */
+    protected TVertice buscarVertice(Comparable unaEtiqueta) {
+        return getVertices().get(unaEtiqueta);
     }
 
     @Override
-    public Comparable centroDelGrafo() {
-        Map<Comparable, Double> excentricidades = obtenerExcentricidades();
-        double minimo = Double.MAX_VALUE;
-        Comparable etiquetaMinimo = " ";
-
-        for (Map.Entry<Comparable, Double> entry : excentricidades.entrySet()) {
-            if (entry.getValue() > -1 && entry.getValue() < minimo) {
-                minimo = entry.getValue();
-                etiquetaMinimo = entry.getKey();
-            }
+    public void desvisitarVertices() {
+        for (TVertice vertice : this.vertices.values()) {
+            vertice.setVisitado(false);
         }
-        return etiquetaMinimo;
     }
+    // </editor-fold>
 
-    public Double[][] floyd2() {
-        Double[][] matrizCostos = UtilGrafos.obtenerMatrizCostos(getVertices());
-        for (int k = 0; k < matrizCostos.length; k++) {
-            for (int i = 0; i < matrizCostos.length; i++) {
-                for (int j = 0; j < matrizCostos.length; j++) {
-                    if ((i != k) && (k != j) && (i != j)) {
-                        double costoIK = matrizCostos[i][k];
-                        double costoKJ = matrizCostos[k][j];
-                        double costoIJ = matrizCostos[i][j];
-                        if (!((costoIK == Double.MAX_VALUE) || (costoKJ == Double.MAX_VALUE))) {
-                            matrizCostos[i][j] = Math.min(costoIJ, (costoIK + costoKJ));
-                        }
-                    }
-                }
-            }
-        }
-        return matrizCostos;
-    }
-
+    // <editor-fold defaultstate="collapsed" desc="Floyd">
     @Override
     public Double[][] floyd() {
         Double[][] matrizFloyd = UtilGrafos.obtenerMatrizCostos(vertices);
@@ -219,7 +206,180 @@ public class TGrafoDirigido implements IGrafoDirigido {
         return matrizFloyd;
     }
 
-    
+    public Double[][] floyd2() {
+        Double[][] matrizCostos = UtilGrafos.obtenerMatrizCostos(getVertices());
+        for (int k = 0; k < matrizCostos.length; k++) {
+            for (int i = 0; i < matrizCostos.length; i++) {
+                for (int j = 0; j < matrizCostos.length; j++) {
+                    if ((i != k) && (k != j) && (i != j)) {
+                        double costoIK = matrizCostos[i][k];
+                        double costoKJ = matrizCostos[k][j];
+                        double costoIJ = matrizCostos[i][j];
+                        if (!((costoIK == Double.MAX_VALUE) || (costoKJ == Double.MAX_VALUE))) {
+                            matrizCostos[i][j] = Math.min(costoIJ, (costoIK + costoKJ));
+                        }
+                    }
+                }
+            }
+        }
+        return matrizCostos;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Warshall">
+    @Override
+    public boolean[][] warshall() {
+        Double[][] matrizADevolver = UtilGrafos.obtenerMatrizCostos(this.vertices);
+        boolean[][] matrizADevolverWarshall = new boolean[matrizADevolver.length][matrizADevolver.length];
+
+        for (int k = 0; k < matrizADevolverWarshall.length; k++) {
+            for (int i = 0; i < matrizADevolverWarshall.length; i++) {
+                for (int j = 0; j < matrizADevolverWarshall.length; j++) {
+                    //Inicializo las conexiones directas con true (deberia funcar igual que hacerlo antes arriba)
+                    if ((i != j) && (matrizADevolver[i][j] != Double.MAX_VALUE)) {
+                        matrizADevolverWarshall[i][j] = true;
+                    }
+
+                    if ((i != j) && (matrizADevolverWarshall[i][j] == false)) {
+                        matrizADevolverWarshall[i][j] = matrizADevolverWarshall[i][k] && matrizADevolverWarshall[k][j];
+                    }
+                }
+            }
+        }
+        return matrizADevolverWarshall;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Tiene Ciclo">
+    @Override
+    public boolean tieneCiclo(Comparable etiquetaOrigen) {
+        TVertice vertV = vertices.get(etiquetaOrigen);
+        if (vertV != null) {
+            desvisitarVertices();
+            TCamino camino = new TCamino(vertV);
+            return vertV.tieneCiclo(camino);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean tieneCiclo() {
+        boolean result = false;
+        if (vertices.isEmpty()) {
+            System.out.println("El grafo está vacio");
+            return result;
+        }
+        desvisitarVertices();
+
+        for (TVertice vertV : this.vertices.values()) {
+            if (result) {
+                break;
+            }
+            if (!vertV.getVisitado()) {
+                TCamino camino = new TCamino(vertV);
+                result = vertV.tieneCiclo(camino);
+                if (result) {
+                    camino.imprimirEtiquetasConsola();
+                }
+            }
+        }
+        if (!result) {
+            System.out.println("no hay ciclos");
+        }
+        return result;
+    }
+
+    @Override
+    public boolean tieneCiclo(TCamino camino) {
+        desvisitarVertices();
+        if (camino == null) {
+            return false;
+        }
+        return camino.getOrigen().tieneCiclo(camino);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Busqueda en profundidad (BPF)">
+    @Override
+    public Collection<TVertice> bpf(TVertice vertice) {
+        desvisitarVertices();
+        Collection<TVertice> visitados = new LinkedList<>();
+        if (vertice != null) {
+            vertice.bpf(visitados);
+        }
+        return visitados;
+    }
+
+    @Override
+    public Collection<TVertice> bpf() {
+        desvisitarVertices(); //agregué este bpf porque no usamos el bpf con vertice al final
+        LinkedList<TVertice> visitados = new LinkedList<>();
+        Collection<TVertice> vertices = this.vertices.values();
+        for (TVertice v : vertices) {
+            if (!v.getVisitado()) {
+                v.bpf(visitados);
+            }
+        }
+        return visitados;
+    }
+
+    @Override
+    public Collection<TVertice> bpf(Comparable etiquetaOrigen) {
+        TVertice aux = vertices.get(etiquetaOrigen);
+        return this.bpf(aux);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Busqueda en Amplitud (BEA)">
+    @Override
+    public Collection<TVertice> bea() {
+        LinkedList<TVertice> resultado = new LinkedList<>();
+        this.desvisitarVertices();
+        this.getVertices().forEach((key, value) -> {
+            if (!value.getVisitado()) {
+                value.bea(resultado);
+            }
+        });
+        return resultado;
+    }
+
+    public Collection<TVertice> bea(Comparable etiquetaOrigen) {
+        desvisitarVertices();
+        LinkedList<TVertice> col = new LinkedList<>();
+        getVertices().get(etiquetaOrigen).bea(col);
+        return col;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Centro y Excentricidad">
+    @Override
+    public Comparable centroDelGrafo() {
+        Map<Comparable, Double> excentricidades = obtenerExcentricidades();
+        double minimo = Double.MAX_VALUE;
+        Comparable etiquetaMinimo = " ";
+
+        for (Map.Entry<Comparable, Double> entry : excentricidades.entrySet()) {
+            if (entry.getValue() > -1 && entry.getValue() < minimo) {
+                minimo = entry.getValue();
+                etiquetaMinimo = entry.getKey();
+            }
+        }
+        return etiquetaMinimo;
+    }
+
+    public Comparable centroDelGrafo2() {
+        Object[] etiquetasarray = this.getEtiquetasOrdenado();
+        Comparable[] excentricidad = new Comparable[]{Double.MAX_VALUE, null};
+        for (int i = 0; i < etiquetasarray.length; i++) {
+            Comparable excentricidadVertice = this.obtenerExcentricidad((Comparable) etiquetasarray[i]);
+            if ((excentricidadVertice.compareTo(-1d) > 0) && excentricidadVertice.compareTo(excentricidad[0]) < 0) {
+                excentricidad[0] = excentricidadVertice;
+                excentricidad[1] = i;
+            }
+        }
+        return (Comparable) etiquetasarray[(int) excentricidad[1]];
+    }
+
     private Map<Comparable, Double> obtenerExcentricidades() {
         Double[][] matrizFloyd = floyd();
         int tamanio = vertices.size();
@@ -272,140 +432,9 @@ public class TGrafoDirigido implements IGrafoDirigido {
         }
         return excentricidad;
     }
+    // </editor-fold>
 
     @Override
-    public boolean[][] warshall() {
-        Double[][] matrizADevolver = UtilGrafos.obtenerMatrizCostos(this.vertices);
-        boolean[][] matrizADevolverWarshall = new boolean[matrizADevolver.length][matrizADevolver.length];
-
-        for (int k = 0; k < matrizADevolverWarshall.length; k++) {
-            for (int i = 0; i < matrizADevolverWarshall.length; i++) {
-                for (int j = 0; j < matrizADevolverWarshall.length; j++) {
-                    //Inicializo las conexiones directas con true (deberia funcar igual que hacerlo antes arriba)
-                    if ((i != j) && (matrizADevolver[i][j] != Double.MAX_VALUE)) {
-                        matrizADevolverWarshall[i][j] = true;
-                    }
-
-                    if ((i != j) && (matrizADevolverWarshall[i][j] == false)) {
-                        matrizADevolverWarshall[i][j] = matrizADevolverWarshall[i][k] && matrizADevolverWarshall[k][j];
-                    }
-                }
-            }
-        }
-        return matrizADevolverWarshall;
-    }
-
-    @Override
-    public boolean eliminarVertice(Comparable nombreVertice) {
-        if (nombreVertice != null) {
-            getVertices().remove(nombreVertice);
-            return getVertices().containsKey(nombreVertice);
-        }
-        return false;
-    }
-
-    public Collection<TVertice> bea(Comparable etiquetaOrigen) {
-        desvisitarVertices();
-        LinkedList<TVertice> col = new LinkedList<>();
-        getVertices().get(etiquetaOrigen).bea(col);
-        return col;
-    }
-    
-    public Collection<TVertice> bea() {
-        LinkedList<TVertice> resultado = new LinkedList<>();
-        this.desvisitarVertices();
-        this.getVertices().forEach((key, value) -> {
-            if (!value.getVisitado()) {
-                value.bea(resultado);
-            }
-        });
-        return resultado;
-    }
-
-//    public Collection<TVertice> bea() {
-//        desvisitarVertices();
-//        LinkedList<TVertice> col = new LinkedList<>();
-//        LinkedList<TVertice> vertices = (LinkedList<TVertice>) this.vertices.values();
-//        getVertices().get(vertices.getFirst()).bea(col);
-//        return col;
-//    }
-
-    public Collection<TVertice> bpf() {
-        desvisitarVertices(); //agregué este bpf porque no usamos el bpf con vertice al final
-        LinkedList<TVertice> visitados = new LinkedList<>();
-        Collection<TVertice> vertices = this.vertices.values();
-        for (TVertice v : vertices) {
-            if (!v.getVisitado()) {
-                v.bpf(visitados);
-            }
-        }
-        return visitados;
-    }
-
-    public Collection<TVertice> bpf(Comparable etiquetaOrigen) {
-        TVertice aux = vertices.get(etiquetaOrigen);
-        return this.bpf(aux);
-    }
-
-    public Collection<TVertice> bpf(TVertice vertice) {
-        desvisitarVertices();
-        Collection<TVertice> visitados = new LinkedList<>();
-        if (vertice != null) {
-            vertice.bpf(visitados);
-        }
-        return visitados;
-    }
-
-    public void desvisitarVertices() {
-        for (TVertice vertice : this.vertices.values()) {
-            vertice.setVisitado(false);
-        }
-    }
-
-    public boolean tieneCiclo(Comparable etiquetaOrigen) {
-        TVertice vertV = vertices.get(etiquetaOrigen);
-        if (vertV != null) {
-            desvisitarVertices();
-            TCamino camino = new TCamino(vertV);
-            return vertV.tieneCiclo(camino);
-        }
-        return false;
-    }
-
-    public boolean tieneCiclo(TCamino camino) {
-        desvisitarVertices();
-        if (camino == null) {
-            return false;
-        }
-        return camino.getOrigen().tieneCiclo(camino);
-    }
-
-    public boolean tieneCiclo() {
-        boolean result = false;
-        if (vertices.isEmpty()) {
-            System.out.println("El grafo está vacio");
-            return result;
-        }
-        desvisitarVertices();
-
-        for (TVertice vertV : this.vertices.values()) {
-            if (result) {
-                break;
-            }
-            if (!vertV.getVisitado()) {
-                TCamino camino = new TCamino(vertV);
-                result = vertV.tieneCiclo(camino);
-                if (result) {
-                    camino.imprimirEtiquetasConsola();
-                }
-            }
-        }
-        if (!result) {
-            System.out.println("no hay ciclos");
-        }
-        return result;
-    }
-
     public TCaminos todosLosCaminos(Comparable etiquetaOrigen, Comparable etiquetaDestino) {
         desvisitarVertices();
         TCaminos todosLosCaminos = new TCaminos();
@@ -416,5 +445,15 @@ public class TGrafoDirigido implements IGrafoDirigido {
             return todosLosCaminos;
         }
         return null;
+    }
+
+    public void imprimirGrafo() {
+        for (TVertice vertice : vertices.values()) {
+            System.out.print("Vertice " + vertice.getEtiqueta() + ":");
+            for (Object adyacencia : vertice.getAdyacentes()) {
+                System.out.print(" [" + ((TAdyacencia) adyacencia).getDestino().getEtiqueta() + ", " + ((TAdyacencia) adyacencia).getCosto() + "]");
+            }
+            System.out.println();
+        }
     }
 }

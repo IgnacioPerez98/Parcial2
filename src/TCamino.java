@@ -1,36 +1,22 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-/**
- *
- * @author Administrator
- */
 public class TCamino {
 
     private final TVertice origen;
     private final Collection<Comparable> otrosVertices;
-    // es una lista de etiquetas de los vertices
-    // ATENCIÓN: PONER LA CLASE CONCRETA QUE
-    // SEA MÁS APROPIADA
     private Double costoTotal;
 
-    
     public TCamino(TVertice v) {
         this.costoTotal = 0.0d;
         this.origen = v;
         this.otrosVertices = new LinkedList();
-
     }
-    // <editor-fold defaultstate="collapsed" desc="Getters y Setters">
-    
-       public TVertice getOrigen() {
+
+    // <editor-fold defaultstate="collapsed" desc="Get & Set">    
+    public TVertice getOrigen() {
         return origen;
     }
 
@@ -38,9 +24,6 @@ public class TCamino {
         return otrosVertices;
     }
 
-    /*public void setOtrosVertices(Collection<Comparable> otrosVertices) {
-        this.otrosVertices = otrosVertices;
-      }*/
     public Double getCostoTotal() {
         return costoTotal;
     }
@@ -49,8 +32,9 @@ public class TCamino {
         this.costoTotal = costoTotal;
     }
     // </editor-fold>
-    
-        public boolean agregarAdyacencia(TAdyacencia adyacenciaActual) {
+
+    // <editor-fold defaultstate="collapsed" desc="Adyacencias">
+    public boolean agregarAdyacencia(TAdyacencia adyacenciaActual) {
         if (adyacenciaActual.getDestino() != null) {
             costoTotal += adyacenciaActual.getCosto();
             return getOtrosVertices().add(adyacenciaActual.getDestino().getEtiqueta());
@@ -58,13 +42,6 @@ public class TCamino {
         return false;
     }
 
-    /* public boolean agregarAdyacencia(TAdyacencia adyacenciaActual) {
-        if (adyacenciaActual.getDestino() != null) {
-            setCostoTotal((Double) getCostoTotal() + ((Number) adyacenciaActual.getCosto()).doubleValue());
-            return getOtrosVertices().add(adyacenciaActual.getDestino().getEtiqueta());
-        }
-        return false;
-    }*/
     public boolean eliminarAdyacencia(TAdyacencia adyacenciaActual) {
         if (getOtrosVertices().contains(adyacenciaActual.getDestino().getEtiqueta())) {
             costoTotal -= adyacenciaActual.getCosto();
@@ -72,32 +49,9 @@ public class TCamino {
         }
         return false;
     }
-    
-    public boolean buscarVertice(Comparable clave) {
-        if (this.origen.getEtiqueta().equals(clave)) {
-            return true;
-        }
-        for (Comparable vert : this.otrosVertices) {
-            if (clave.equals(vert)) {
-                return true;
-            }
+    // </editor-fold>
 
-        }
-        return false;
-    }
-
-    public void imprimirEtiquetasConsola() {
-        System.out.println(imprimirEtiquetas());
-    }
-
-    public String imprimirEtiquetas() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Origen: " + getOrigen().getEtiqueta());
-        for (Comparable adyacente : getOtrosVertices()) {
-            sb.append(" -> " + adyacente);
-        }
-        return sb.toString();
-    }
+    // <editor-fold defaultstate="collapsed" desc="Impresiones">
     public String imprimirDesdeClave(Comparable clave) {
         StringBuilder sb = new StringBuilder();
         boolean start = false;
@@ -117,20 +71,41 @@ public class TCamino {
         return sb.toString();
     }
 
+    public void imprimirEtiquetasConsola() {
+        System.out.println(imprimirEtiquetas());
+    }
 
+    public String imprimirEtiquetas() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Origen: " + getOrigen().getEtiqueta());
+        for (Comparable adyacente : getOtrosVertices()) {
+            sb.append(" -> " + adyacente);
+        }
+        return sb.toString();
+    }
 
-
- 
-
+    // </editor-fold>
+    
     public TCamino copiar() {
         TVertice origenCopia = new TVertice(this.getOrigen().getEtiqueta());
         TCamino copia = new TCamino(origenCopia);
         copia.setCostoTotal(this.getCostoTotal());
-        // origenCopia.getAdyacentes().addAll(this.getOrigen().getAdyacentes());
         copia.getOtrosVertices().addAll(this.getOtrosVertices());
 
         return copia;
     }
 
-}
+    public boolean buscarVertice(Comparable clave) {
+        if (this.origen.getEtiqueta().equals(clave)) {
+            return true;
+        }
+        for (Comparable vert : this.otrosVertices) {
+            if (clave.equals(vert)) {
+                return true;
+            }
 
+        }
+        return false;
+    }
+
+}

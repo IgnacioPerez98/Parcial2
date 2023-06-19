@@ -1,6 +1,4 @@
 
-
-
 public class TArista implements IArista {
 
     protected Comparable etiquetaOrigen;
@@ -13,8 +11,12 @@ public class TArista implements IArista {
         this.costo = costo;
     }
 
-    // <editor-fold defaultstate="collapsed" desc="Getters y Setters">
-     @Override
+    public TArista aristaInversa() {
+        return new TArista(this.getEtiquetaDestino(), this.getEtiquetaOrigen(), this.getCosto());
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="Get & Set">
+    @Override
     public Comparable getEtiquetaOrigen() {
         return etiquetaOrigen;
     }
@@ -43,14 +45,6 @@ public class TArista implements IArista {
     public void setCosto(double costo) {
         this.costo = costo;
     }
-    
-    public TArista aristaInversa() {
-        return new TArista(this.getEtiquetaDestino(), this.getEtiquetaOrigen(), this.getCosto());
-    }
     // </editor-fold>
 
-    
-   
-
-    
 }
