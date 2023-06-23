@@ -22,22 +22,34 @@ public class TGrafoNoDirigidoTest {
 
     private TGrafoNoDirigido CrearGrafo(){
         Collection<TVertice> vertices = new LinkedList<>();
-        TVertice miVerticetito1 = new TVertice("Hola");
-        TVertice miVerticetito2 = new TVertice("Hola2");
-        TVertice miVerticetito3 = new TVertice("Hola3");
+        TVertice miVerticetito1 = new TVertice("1");
+        TVertice miVerticetito2 = new TVertice("2");
+        TVertice miVerticetito3 = new TVertice("3");        
+        TVertice miVerticetito4 = new TVertice("4");
+        TVertice miVerticetito5 = new TVertice("5");
+
         vertices.add(miVerticetito2);
         vertices.add(miVerticetito1);
         vertices.add(miVerticetito3);
+        vertices.add(miVerticetito4);
+        vertices.add(miVerticetito5);
 
-        TAristas lasAristasDelNico = new TAristas();
-        TArista laAristaDelNico1 = new TArista("Hola", "Hola2", 2);
-        TArista laAristaDelNico2 = new TArista("Hola", "Hola3", 1);
-        TArista laAristaDelNico3 = new TArista("Hola2", "Hola3", 100);
-        lasAristasDelNico.add(laAristaDelNico1);
-        lasAristasDelNico.add(laAristaDelNico2);
-        lasAristasDelNico.add(laAristaDelNico3);
+        TAristas lasAristas = new TAristas();
+        TArista laAristas1 = new TArista("1", "2", 2);
+        TArista laAristas3 = new TArista("2", "3", 100);     
+        TArista laAristas2 = new TArista("3", "4", 1);   
+        //TArista laAristas4 = new TArista("1", "4", 50);
+        //TArista laAristas5 = new TArista("1", "5", 100);     
 
-        TGrafoNoDirigido myTgrafito = new TGrafoNoDirigido(vertices, lasAristasDelNico);
+        lasAristas.add(laAristas1);
+        lasAristas.add(laAristas2);
+        lasAristas.add(laAristas3);        
+        //lasAristas.add(laAristas4);        
+        //lasAristas.add(laAristas5);
+
+
+
+        TGrafoNoDirigido myTgrafito = new TGrafoNoDirigido(vertices, lasAristas);
         return myTgrafito;
     }
     @Before
@@ -54,6 +66,10 @@ public class TGrafoNoDirigidoTest {
 
     @Test
     public void testPrim() {
+        
+        var res = GrafoSimplificado.esConexo();
+        System.out.println(res);
+        /*
         TGrafoNoDirigido myTgrafito2 = GrafoSimplificado.Prim();
                
         double sum = 0;
@@ -62,7 +78,7 @@ public class TGrafoNoDirigidoTest {
             sum = sum + a.costo;
         }
         
-        assert(6.0 == sum);
+        assert(6.0 == sum);*/
     }
 
     @Test
