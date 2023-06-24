@@ -244,7 +244,7 @@ public class TGrafoDirigidoTest {
 
     @Test
     public void testBea_Comparable() {
-        GrafoSimplif2.imprimirGrafo();
+        GrafoSimplif2.imprimirGrafo(true);
         var ordenado = GrafoSimplif2.bea("1");
         String expected = "12354";
         String actual = "";

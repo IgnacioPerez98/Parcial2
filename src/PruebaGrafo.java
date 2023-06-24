@@ -3,7 +3,7 @@
 public class PruebaGrafo {
 
     public static void main(String[] args) {
-        String path = System.getProperty("user.dir");
+        /*String path = System.getProperty("user.dir");
         TGrafoDirigido gd = (TGrafoDirigido) UtilGrafos.cargarGrafo(path+".\\src\\aeropuertos_2.txt",path+".\\src\\conexiones_2.txt",
                 false, TGrafoDirigido.class);
 
@@ -18,8 +18,10 @@ public class PruebaGrafo {
             System.out.println("excentricidad de " + etiquetasarray[i] + " : " + gd.obtenerExcentricidad((Comparable) etiquetasarray[i]));
         }
         System.out.println();
-        System.out.println("Centro del grafo: " + gd.centroDelGrafo2());
-       
+        System.out.println("Centro del grafo: " + gd.centroDelGrafo2());*/
+        
+        //Changelog
+        //Metodo de TVertice conectadoCon areglado.
        
     }
 }

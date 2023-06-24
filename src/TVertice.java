@@ -214,6 +214,7 @@ public class TVertice<T> implements IVertice {
             TVertice vertAdy = adyacente.getDestino();
             if (!vertAdy.getVisitado()) {
                 encontrado = vertAdy.conectadoCon(destino);
+                if(encontrado) return true;
             }
         }
         return encontrado;

@@ -7,13 +7,25 @@ import java.util.TreeMap;
 
 public class TGrafoDirigido implements IGrafoDirigido {
 
-    public void imprimirGrafo() {
-        for (TVertice vertice : vertices.values()) {
-            System.out.print("Vertice " + vertice.getEtiqueta() + ":");
-            for (Object adyacencia : vertice.getAdyacentes()) {
-                System.out.print(" [" + ((TAdyacencia)adyacencia).getDestino().getEtiqueta() + ", " + ((TAdyacencia)adyacencia).getCosto() + "]");
+    public void imprimirGrafo(boolean incluirCostos) {
+
+        if (incluirCostos) {
+            for (TVertice vertice : vertices.values()) {
+                System.out.print("Vertice " + vertice.getEtiqueta() + ":");
+                for (Object adyacencia : vertice.getAdyacentes()) {
+                    System.out.print(" [" + ((TAdyacencia) adyacencia).getDestino().getEtiqueta() + ", " + ((TAdyacencia) adyacencia).getCosto() + "]");
+                }
+                System.out.println();
             }
-            System.out.println();
+        } else {
+            for (TVertice vertice : vertices.values()) {
+                System.out.print("Vertice " + vertice.getEtiqueta() + ":");
+                for (Object adyacencia : vertice.getAdyacentes()) {
+                    System.out.print(" [" + ((TAdyacencia) adyacencia).getDestino().getEtiqueta() + "]");
+                }
+                System.out.println();
+            }
+
         }
     }
     protected Map<Comparable, TVertice> vertices; // vertices del grafo.-
@@ -219,7 +231,6 @@ public class TGrafoDirigido implements IGrafoDirigido {
         return matrizFloyd;
     }
 
-    
     private Map<Comparable, Double> obtenerExcentricidades() {
         Double[][] matrizFloyd = floyd();
         int tamanio = vertices.size();
@@ -310,7 +321,7 @@ public class TGrafoDirigido implements IGrafoDirigido {
         getVertices().get(etiquetaOrigen).bea(col);
         return col;
     }
-    
+
     public Collection<TVertice> bea() {
         LinkedList<TVertice> resultado = new LinkedList<>();
         this.desvisitarVertices();
@@ -329,7 +340,6 @@ public class TGrafoDirigido implements IGrafoDirigido {
 //        getVertices().get(vertices.getFirst()).bea(col);
 //        return col;
 //    }
-
     public Collection<TVertice> bpf() {
         desvisitarVertices(); //agregué este bpf porque no usamos el bpf con vertice al final
         LinkedList<TVertice> visitados = new LinkedList<>();
