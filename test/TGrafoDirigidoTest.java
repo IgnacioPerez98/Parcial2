@@ -57,7 +57,8 @@ public class TGrafoDirigidoTest {
         vertices.add(vert2);
         vertices.add(vert3);
         vertices.add(vert4);
-        vertices.add(vert5);
+        vertices.add(vert5);     
+
 
         //creo las Aristas
         TAristas aristas = new TAristas();
@@ -238,8 +239,11 @@ public class TGrafoDirigidoTest {
     public void testWarshall() {
     }
 
+    
     @Test
-    public void testEliminarVertice() {
+    public void testAlcanceTotal() {
+        System.out.println(GrafoSimplif2.alcanceTotal("1"));
+        
     }
 
     @Test

@@ -9,12 +9,20 @@ public class TVertice<T> implements IVertice {
     private LinkedList<TAdyacencia> adyacentes;
     private boolean visitado;
     private T datos;
+    private TVertice<T> padre;
+    
+    
 
     // <editor-fold defaultstate="collapsed" desc="Getters y Setters">
     /**
      *
      * @return
      */
+    
+    public TVertice<T> getFather(){ return this.padre; }
+    public void setFather(TVertice<T> valor){
+        this.padre = valor;
+    }    
     public T getDatos() {
         return datos;
     }

@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -219,6 +220,27 @@ public class UtilGrafos {
         try {
             t.getConstructor(Collection.class, Collection.class);
             return (T) (t.getConstructor(Collection.class, Collection.class).newInstance(verticesList, aristasList));
+        } catch (Exception ex) {
+            Logger.getLogger(UtilGrafos.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+        return null;
+    }
+    public static <T extends IGrafoDirigido> T cargarGrafo(String nomArchVert, LinkedList<TArista> adyAristas, 
+            boolean ignoreHeader, Class t  ) {
+
+        String[] vertices = ManejadorArchivosGenerico.leerArchivo(nomArchVert, ignoreHeader);
+
+        List<TVertice> verticesList = new ArrayList<TVertice>(vertices.length);
+
+        for (String verticeString : vertices) {
+            if ((verticeString != null) && (verticeString.trim() != "")) {
+                verticeString = verticeString.split(",")[0];
+                verticesList.add(new TVertice(verticeString));
+            }
+        }
+        try {
+            t.getConstructor(Collection.class, Collection.class);
+            return (T) (t.getConstructor(Collection.class, Collection.class).newInstance(verticesList, adyAristas));
         } catch (Exception ex) {
             Logger.getLogger(UtilGrafos.class.getName()).log(Level.SEVERE, null, ex);
         } 

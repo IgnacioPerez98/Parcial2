@@ -166,7 +166,8 @@ public class TGrafoNoDirigidoTest {
     }
 
     @org.junit.Test
-    public void testNumBacon() {
+    public void testNumBacon() {//Agregar maximo de saltos
+        
     }
     
 }

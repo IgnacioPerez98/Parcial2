@@ -34,7 +34,7 @@ public class TAristas extends LinkedList<TArista> {
 
         return null;
     }
-       public TAristas copiarTAristasOrdenado() {
+    public TAristas copiarTAristasOrdenado() {
         Comparator comp = new Comparator<TArista>() {
             public int compare(TArista ar1, TArista ar2){
                 return (int) (ar1.getCosto() - ar2.getCosto());  
@@ -73,15 +73,6 @@ public class TAristas extends LinkedList<TArista> {
                 }
             }
         }
-        // ---------COMPLETAR ALGORITMO--------
-        // para todo u en Vertices U
-        // para todo v en Vertices V
-        // tA =buscar (u, v)
-        // si tA <> null y tA.costo < costoMin entonces
-        // tAMin = tA y costoMin = tA.costo
-        // fin para todo v
-        // fin para todo u
-        // devolver tAMin
         return tAMin;
     }
 

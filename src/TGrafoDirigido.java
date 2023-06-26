@@ -1,8 +1,11 @@
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 import java.util.TreeMap;
 
 public class TGrafoDirigido implements IGrafoDirigido {
@@ -17,7 +20,8 @@ public class TGrafoDirigido implements IGrafoDirigido {
                 }
                 System.out.println();
             }
-        } else {
+        }
+        else {
             for (TVertice vertice : vertices.values()) {
                 System.out.print("Vertice " + vertice.getEtiqueta() + ":");
                 for (Object adyacencia : vertice.getAdyacentes()) {
@@ -426,5 +430,71 @@ public class TGrafoDirigido implements IGrafoDirigido {
             return todosLosCaminos;
         }
         return null;
+    }
+
+    public boolean alcanceTotal(Comparable nombreAeropuerto) {
+        desvisitarVertices();
+        TVertice vertice = buscarVertice(nombreAeropuerto);
+        if (vertice == null) {
+            return false; // El aeropuerto no existe en el grafo
+        }
+        Collection<Comparable> visitados = new LinkedList<>();
+        vertice.bpf(visitados); // Realizar una búsqueda en profundidad desde el aeropuerto dado
+
+        // Verificar si todos los aeropuertos han sido visitados
+        Collection<TVertice> vertices = this.vertices.values();
+        for (TVertice v : vertices) {
+            if (!visitados.contains(v.getEtiqueta())) {
+                return false; // No se pudo alcanzar a todos los aeropuertos
+            }
+        }
+        return true; // Se pudo alcanzar a todos los aeropuertos
+    }
+
+    public LinkedList<TVertice> rutaMenosSaltos(Comparable servidor1, Comparable servidor2) {
+        TVertice verticeInicio = buscarVertice(servidor1);
+        TVertice verticeDestino = buscarVertice(servidor2);
+
+        if (verticeInicio == null || verticeDestino == null) {
+            System.out.println("No existe");
+            return new LinkedList<>(); //Uno de los servidores no existe
+        }
+
+        Queue<TVertice> cola = new LinkedList<>();
+        Set<Comparable> visitados = new HashSet<>();
+
+        cola.add(verticeInicio);
+        visitados.add(servidor1);
+        verticeInicio.setFather(null);
+
+        while (!cola.isEmpty()) {
+            TVertice actual = cola.poll();
+
+            if (actual.getEtiqueta().equals(servidor2)) {
+                // Found the route, construct the list of vertices in order
+                LinkedList<TVertice> ruta = new LinkedList<>();
+                ruta.addFirst(actual);
+
+                TVertice padre = actual.getFather();
+                while (padre != null) {
+                    ruta.addFirst(padre);
+                    padre = padre.getFather();
+                }
+
+                return ruta;
+            }
+
+            LinkedList<TAdyacencia> laLista = actual.getAdyacentes();
+            for (TAdyacencia adyacencia : laLista) {
+                TVertice adyacente = adyacencia.getDestino();
+                if (!visitados.contains(adyacente.getEtiqueta())) {
+                    cola.add(adyacente);
+                    visitados.add(adyacente.getEtiqueta());
+                    adyacente.setFather(actual);
+                }
+            }
+        }
+
+        return null; // No route found between the servers
     }
 }
