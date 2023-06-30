@@ -552,4 +552,14 @@ public class TGrafoDirigido implements IGrafoDirigido {
             }
         }
     }
+    
+    public Collection<Comparable> ClasificacionTopologica(Comparable destino) {
+        TVertice vert = buscarVertice(destino);
+        if(vert == null){
+            return null;
+        }
+        Collection<Comparable> res= new LinkedList<>();
+        vert.ClasificacionTopologica(res);
+        return res;
+    }
 }

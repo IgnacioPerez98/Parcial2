@@ -304,6 +304,18 @@ public class TVertice<T> implements IVertice {
         }
         return Integer.MAX_VALUE;
     }
+    
+    
+    public void ClasificacionTopologica(Collection<Comparable> lista){
+        setVisitado(true);
+        for(TAdyacencia ady : (LinkedList<TAdyacencia>)this.adyacentes){
+            TVertice vert = ady.getDestino();
+            if(!vert.getVisitado()){
+                vert.ClasificacionTopologica(lista);
+            }
+        }
+        lista.add(etiqueta);
+    }
 
     // </editor-fold>
     public void SaltosDesdeVertice(Collection<TVertice> visitados, int maxSaltos) {
