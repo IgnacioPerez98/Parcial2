@@ -224,11 +224,9 @@ public class TGrafoDirigidoTest {
     }
 
     @Test
-    public void testFloyd2() {
-    }
-
-    @Test
     public void testFloyd() {
+        var res = GrafoSimplif2.floyd();
+        assertNotNull(res);
     }
 
     @Test
@@ -329,8 +327,19 @@ public class TGrafoDirigidoTest {
     }
 
     @Test
-    public void testTieneCiclo_Comparable() {
+    public void testTieneCiclo_ComparableConCiclo() {
+        GrafoSimplif2.insertarArista(new TArista("5","1",0));
+        var res= GrafoSimplif2.tieneCiclo();
+        System.out.println("Tiene ciclo : "+res);
+        assertTrue(res);
     }
+     @Test
+    public void testTieneCiclo_Comparable() {
+        var res= GrafoSimplif2.tieneCiclo();
+        System.out.println("Tiene ciclo : "+res);        
+        assertFalse(res);
+    }
+
 
     @Test
     public void testTieneCiclo_TCamino() {

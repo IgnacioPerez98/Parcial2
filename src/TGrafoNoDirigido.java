@@ -176,18 +176,18 @@ public class TGrafoNoDirigido extends TGrafoDirigido implements IGrafoNoDirigido
         return costo / 2;
     }
 
-    public int numBacon(Comparable actor) {
+    public int numBacon(Comparable inicio, Comparable destino) {
         desvisitarVertices();
         int numBacon;
-        TVertice kBacon = getVertices().get("Kevin_Bacon");
-        TVertice vActor = getVertices().get(actor);
-        if (vActor != null) {
+        TVertice kBacon = getVertices().get(inicio);
+        TVertice vActor = getVertices().get(destino);
+        if (vActor != null && kBacon!=null) {
             //Si ya tiene un numero de bacon (ya se corrio el algoritmo una vez).
             if (vActor.getBacon() > -1) {
                 numBacon = vActor.getBacon();
             }
             else {
-                numBacon = kBacon.numBacon(actor);
+                numBacon = kBacon.numBacon(destino);
                 if (numBacon == Integer.MAX_VALUE) {
                     vActor.setBacon(numBacon);
                 }
@@ -197,6 +197,12 @@ public class TGrafoNoDirigido extends TGrafoDirigido implements IGrafoNoDirigido
             numBacon = -1;
         }
         return numBacon;
+    }
+    public LinkedList<TVertice> SaltosDesdeVertice(Comparable origen, int maximosSaltos){
+        LinkedList<TVertice> lista = new LinkedList<>();
+        TVertice x = buscarVertice(origen);
+        x.SaltosDesdeVertice(lista, maximosSaltos);        
+        return lista;
     }
 
     /**

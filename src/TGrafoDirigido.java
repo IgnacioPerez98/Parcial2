@@ -20,8 +20,7 @@ public class TGrafoDirigido implements IGrafoDirigido {
                 }
                 System.out.println();
             }
-        }
-        else {
+        } else {
             for (TVertice vertice : vertices.values()) {
                 System.out.print("Vertice " + vertice.getEtiqueta() + ":");
                 for (Object adyacencia : vertice.getAdyacentes()) {
@@ -44,6 +43,7 @@ public class TGrafoDirigido implements IGrafoDirigido {
         }
     }
 
+    //<editor-fold desc="Operacion de Aristas/Vertice">
     /**
      * Metodo encargado de eliminar una arista dada por un origen y destino. En
      * caso de no existir la adyacencia, retorna falso. En caso de que las
@@ -157,6 +157,7 @@ public class TGrafoDirigido implements IGrafoDirigido {
         return mapOrdenado.keySet().toArray();
     }
 
+    //</editor-fold>
     /**
      * @return the vertices
      */
@@ -164,7 +165,8 @@ public class TGrafoDirigido implements IGrafoDirigido {
         return vertices;
     }
 
-    public Comparable centroDelGrafo2() {
+    @Override
+    public Comparable centroDelGrafo() {
         Object[] etiquetasarray = this.getEtiquetasOrdenado();
         Comparable[] excentricidad = new Comparable[]{Double.MAX_VALUE, null};
         for (int i = 0; i < etiquetasarray.length; i++) {
@@ -177,7 +179,7 @@ public class TGrafoDirigido implements IGrafoDirigido {
         return (Comparable) etiquetasarray[(int) excentricidad[1]];
     }
 
-    @Override
+    /*@Override
     public Comparable centroDelGrafo() {
         Map<Comparable, Double> excentricidades = obtenerExcentricidades();
         double minimo = Double.MAX_VALUE;
@@ -190,9 +192,9 @@ public class TGrafoDirigido implements IGrafoDirigido {
             }
         }
         return etiquetaMinimo;
-    }
-
-    public Double[][] floyd2() {
+    }*/
+    @Override
+    public Double[][] floyd() {
         Double[][] matrizCostos = UtilGrafos.obtenerMatrizCostos(getVertices());
         for (int k = 0; k < matrizCostos.length; k++) {
             for (int i = 0; i < matrizCostos.length; i++) {
@@ -211,7 +213,7 @@ public class TGrafoDirigido implements IGrafoDirigido {
         return matrizCostos;
     }
 
-    @Override
+    /*
     public Double[][] floyd() {
         Double[][] matrizFloyd = UtilGrafos.obtenerMatrizCostos(vertices);
         Double[][] matrizPredecesores = new Double[matrizFloyd.length][matrizFloyd.length];
@@ -234,7 +236,7 @@ public class TGrafoDirigido implements IGrafoDirigido {
         }
         return matrizFloyd;
     }
-
+     */
     private Map<Comparable, Double> obtenerExcentricidades() {
         Double[][] matrizFloyd = floyd();
         int tamanio = vertices.size();
@@ -496,5 +498,58 @@ public class TGrafoDirigido implements IGrafoDirigido {
         }
 
         return null; // No route found between the servers
+    }
+
+    public LinkedList<Comparable> aeropuertosNoAccesiblesDesdeTodos() {
+        Collection<TVertice> verticesAProcesar = this.getVertices().values();
+        Map<Comparable, TVertice> verticesNoAccesiblesDesdeUno = new HashMap<>();
+
+        for (TVertice vertice : verticesAProcesar) {
+            this.desvisitarVertices();
+            Map<Comparable, TVertice> verticesVisitadosHash = new HashMap<>();
+            Collection<Comparable> verticesVisitados = new LinkedList<>();
+            vertice.bpf(verticesVisitados);
+            if (verticesVisitados.size() < verticesAProcesar.size()) {
+                for (Comparable verticeVisitado : verticesVisitados) {
+                    verticesVisitadosHash.put(verticeVisitado, this.getVertices().get(verticeVisitado));
+                }
+                for (TVertice verticeAComparar : verticesAProcesar) {
+                    if (verticesVisitadosHash.get(verticeAComparar.getEtiqueta()) == null) {
+                        verticesNoAccesiblesDesdeUno.put(verticeAComparar.getEtiqueta(), verticeAComparar);
+                    }
+                }
+            }
+        }
+        this.desvisitarVertices();
+        LinkedList<Comparable> verticesResultantes = new LinkedList<Comparable>();
+        for (Comparable vertice : verticesNoAccesiblesDesdeUno.keySet()) {
+            verticesResultantes.add(vertice);
+        }
+        if (verticesResultantes.isEmpty()) {
+            return null;
+        } else {
+            return verticesResultantes;
+        }
+    }
+    
+    
+    public Collection<TVertice> listarContactos(String nombreActor, int maxSaltos) {
+        this.desvisitarVertices();
+        Collection<TVertice> resultado = new LinkedList<>();
+        TVertice vertActor = this.buscarVertice(nombreActor);
+        if (vertActor != null) {
+            vertActor.listarContactos(resultado, maxSaltos);
+        }
+        return resultado;
+    }
+    
+    
+    public void clasificarArcos(TAristas Arbol, TAristas Retroceso, TAristas Avance, TAristas Cruzados) {
+        this.desvisitarVertices();
+        for (TVertice vertV : this.vertices.values()) { //Para cada entrada de "vertices"...
+            if (!vertV.getVisitado()) { //Si el vertice no está visitado
+                vertV.clasificarArcos(Arbol, Retroceso, Avance, Cruzados); //Ejecuto el metodo bpf() del vertice.
+            }
+        }
     }
 }
